@@ -4,6 +4,7 @@ var secret = process.env.SECRET;
 // Setup express
 var express = require('express');
 var app = express();
+var port = process.env.PORT || 3000;
 
 // Setup BlinkTrade
 var BlinkTrade = require('blinktrade');
@@ -99,6 +100,6 @@ app.get('/', function(req, res) {
     }
 });
 
-app.listen(3000, function () {
+app.listen(port, function () {
   console.log('Listening on port 3000!');
 });

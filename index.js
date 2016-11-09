@@ -86,12 +86,13 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
 };
 
 app.get('/', function(req, res) {
-    if (req.params.secret === secret) {
-      depositCoinbasetoUrdubit(
-        res.json({
-            'success': true,
-            'message': 'Done!'
-        }));
+    if (req.query.secret === secret) {
+        depositCoinbasetoUrdubit(
+            res.json({
+                'success': true,
+                'message': 'Done!'
+            })
+        );
     } else {
         res.json({
             'success': false,
@@ -100,6 +101,6 @@ app.get('/', function(req, res) {
     }
 });
 
-app.listen(port, function () {
-  console.log('Listening on port 3000!');
+app.listen(port, function() {
+    console.log('Listening on port ' + port);
 });

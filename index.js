@@ -1,3 +1,6 @@
+// Secret
+var secret = process.env.SECRET;
+
 // Setup BlinkTrade
 var BlinkTrade = require('blinktrade');
 var BlinkTradeWS = BlinkTrade.BlinkTradeWS;
@@ -32,7 +35,7 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address) {
                 'amount': amount,
                 'currency': currency
             }, function(err, tx) {
-                console.log(tx.title + " " + tx.subtitle);
+                console.log(tx.details.title + " " + tx.details.subtitle);
             });
         })
         .catch(function(err) {
@@ -75,3 +78,5 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit() {
             console.log(err);
         });
 };
+
+depositCoinbasetoUrdubit();

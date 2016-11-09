@@ -1,0 +1,11 @@
+{
+  "name": "payload-mover",
+  "version": "1.0.0",
+  "description": "A small script that moves coins from my coinbase wallet to a bitex exchange",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Amin Shah Gilani <amin@gilani.me>",
+  "license": "ISC"
+}

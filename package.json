@@ -1,16 +1,25 @@
 {
-  "name": "payload-mover",
-  "version": "1.0.0",
-  "description": "A small script that moves coins from my coinbase wallet to a bitex exchange",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Amin Shah Gilani <amin@gilani.me>",
-  "license": "ISC",
-  "dependencies": {
-    "blinktrade": "0.0.2",
-    "coinbase": "^2.0.6",
-    "express": "^4.14.0"
-  }
+    "name": "payload-mover",
+    "version": "1.0.0",
+    "description": "A small script that moves coins from my coinbase wallet to a bitex exchange",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repo"
+    "author": "Amin Shah Gilani <amin@gilani.me>",
+    "license": "ISC",
+    "dependencies": {
+        "blinktrade": "0.0.2",
+        "coinbase": "^2.0.6",
+        "express": "^4.14.0"
+    }
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/payloadtech/payload-mover.git"
+    },
+    "bugs": {
+        "url": "https://github.com/payloadtech/payload-mover/issues"
+    },
+    "homepage": "https://github.com/payloadtech/payload-mover#readme"
 }

@@ -1,6 +1,10 @@
 // Secret
 var secret = process.env.SECRET;
 
+// Setup express
+var express = require('express');
+var app = express();
+
 // Setup BlinkTrade
 var BlinkTrade = require('blinktrade');
 var BlinkTradeWS = BlinkTrade.BlinkTradeWS;
@@ -18,7 +22,7 @@ var coinbase = Promise.promisifyAll(new Client({
 }));
 
 // move bitcoin from Coinbase account to given address
-var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address) {
+var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) {
     coinbase
     // grab the accounts
         .getAccountsAsync({})
@@ -36,6 +40,7 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address) {
                 'currency': currency
             }, function(err, tx) {
                 console.log(tx.details.title + " " + tx.details.subtitle);
+                cb();
             });
         })
         .catch(function(err) {
@@ -45,7 +50,7 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address) {
 };
 
 // Fetch a deposit address for Urdubit and transfer bitcoin to it
-var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit() {
+var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
     blinktrade
         .connect()
         // run a heartbeat
@@ -71,7 +76,7 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit() {
         // request a deposit, and transfer bitcoin to it
         .then(function() {
             blinktrade.requestDeposit().on('DEPOSIT_REFRESH', function(deposit) {
-                transferCoinbaseBitcoinTo(deposit.Data.InputAddress);
+                transferCoinbaseBitcoinTo(deposit.Data.InputAddress, cb);
             });
         })
         .catch(function(err) {
@@ -79,4 +84,21 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit() {
         });
 };
 
-depositCoinbasetoUrdubit();
+app.get('/', function(req, res) {
+    if (req.params.secret === secret) {
+      depositCoinbasetoUrdubit(
+        res.json({
+            'success': true,
+            'message': 'Done!'
+        }));
+    } else {
+        res.json({
+            'success': false,
+            'message': 'Invalid secret'
+        });
+    }
+});
+
+app.listen(3000, function () {
+  console.log('Listening on port 3000!');
+});

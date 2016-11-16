@@ -1,6 +1,7 @@
 // Setup request
 var request = require('request');
-var appWebhook = 'http://requestb.in/1b6ffx81'
+var appWebhookUrl = 'http://requestb.in/1b6ffx81';
+var appWebhookSecret = process.env.APP_WEBHOOK_SECRET;
 
 // Secret
 var secret = process.env.SECRET;
@@ -117,18 +118,18 @@ app.get('/', function(req, res) {
         depositCoinbasetoUrdubit(function(response) {
 
             // send a webhook to the app about a block being found
-            request.post({
-                url: appWebhook,
-                form: {
-                    key: 'value'
+            request({
+                url: appWebhookUrl,
+                method: 'POST',
+                qs: {
+                  secret: appWebhookSecret
                 },
-                query: {
-                  secret: 'secret'
+                form: {
+                  message: 'New block!'
                 }
-            }, function(err, res, body) {
-                if (!error && res.statusCode == 200) {
-                    console.log(body); // Show the HTML for the callback request
-                }
+            }, function(error, response, body) {
+                if (error) console.log(error);
+                console.log(response.statusCode);
             });
 
             // send back the response to the webpage

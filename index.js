@@ -113,7 +113,7 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
         });
 };
 
-app.get('/', function(req, res) {
+app.post('/', function(req, res) {
     if (req.query.secret === secret) {
         depositCoinbasetoUrdubit(function(response) {
 
@@ -141,6 +141,14 @@ app.get('/', function(req, res) {
             'message': 'Invalid secret'
         });
     }
+});
+
+// just having some fun
+app.get('/', function(req, res){
+  res.json({
+    message: 'Wtf? Are you high?',
+    status: '420'
+  });
 });
 
 app.listen(port, function() {

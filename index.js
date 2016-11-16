@@ -127,9 +127,9 @@ app.post('/', function(req, res) {
                 json: {
                   message: 'New block!'
                 }
-            }, function(error, response, body) {
+            }, function(error, postResponse, body) {
                 if (error) console.log(error);
-                console.log(response.statusCode);
+                console.log(postResponse.statusCode);
             });
 
             // send back the response to the webpage

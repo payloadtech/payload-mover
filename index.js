@@ -1,3 +1,7 @@
+// Setup request
+var request = require('request');
+var appWebhook = 'http://requestb.in/1b6ffx81'
+
 // Secret
 var secret = process.env.SECRET;
 
@@ -24,6 +28,7 @@ var coinbase = Promise.promisifyAll(new Client({
 
 // move bitcoin from Coinbase account to given address
 var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) {
+    console.log('transfering from Coinbase to ' + address);
     coinbase
     // grab the accounts
         .getAccountsAsync({})
@@ -35,17 +40,35 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) 
         .then(function(account) {
             amount = account.balance.amount;
             currency = account.balance.currency;
-            account.sendMoney({
-                'to': address,
-                'amount': amount,
-                'currency': currency
-            }, function(err, tx) {
-                console.log(tx.details.title + " " + tx.details.subtitle);
-                cb();
-            });
+
+            console.log('transfering ' + amount + ' BTC');
+
+            if (amount > 0) {
+                account.sendMoney({
+                    'to': address,
+                    'amount': amount,
+                    'currency': currency
+                }, function(err, tx) {
+                    console.log(tx.details.title + " " + tx.details.subtitle);
+                    cb({
+                        'success': true,
+                        'message': 'Done!'
+                    });
+                });
+            } else {
+                console.log('No bitcoins to transfer');
+                cb({
+                    'success': true,
+                    'message': 'No funds to transfer'
+                });
+            }
         })
         .catch(function(err) {
             console.log(err);
+            cb({
+                'success': false,
+                'message': 'An unknown error occurred'
+            });
         });
 
 };
@@ -77,10 +100,7 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
         // request a deposit, and transfer bitcoin to it
         .then(function() {
             blinktrade.requestDeposit().on('DEPOSIT_REFRESH', function(deposit) {
-                transferCoinbaseBitcoinTo(deposit.Data.InputAddress, cb({
-                    'success': true,
-                    'message': 'Done!'
-                }));
+                transferCoinbaseBitcoinTo(deposit.Data.InputAddress, cb);
             });
         })
         .catch(function(err) {
@@ -95,6 +115,23 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
 app.get('/', function(req, res) {
     if (req.query.secret === secret) {
         depositCoinbasetoUrdubit(function(response) {
+
+            // send a webhook to the app about a block being found
+            request.post({
+                url: appWebhook,
+                form: {
+                    key: 'value'
+                },
+                query: {
+                  secret: 'secret'
+                }
+            }, function(err, res, body) {
+                if (!error && res.statusCode == 200) {
+                    console.log(body); // Show the HTML for the callback request
+                }
+            });
+
+            // send back the response to the webpage
             res.json(response);
         });
     } else {

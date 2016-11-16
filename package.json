@@ -12,7 +12,8 @@
     "blinktrade": "0.0.2",
     "bluebird": "^3.4.6",
     "coinbase": "^2.0.6",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "request": "^2.78.0"
   },
   "repository": {
     "type": "git",

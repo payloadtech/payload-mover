@@ -77,22 +77,26 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
         // request a deposit, and transfer bitcoin to it
         .then(function() {
             blinktrade.requestDeposit().on('DEPOSIT_REFRESH', function(deposit) {
-                transferCoinbaseBitcoinTo(deposit.Data.InputAddress, cb);
+                transferCoinbaseBitcoinTo(deposit.Data.InputAddress, cb({
+                    'success': true,
+                    'message': 'Done!'
+                }));
             });
         })
         .catch(function(err) {
             console.log(err);
+            cb({
+                'success': false,
+                'message': 'An unknown error occurred'
+            });
         });
 };
 
 app.get('/', function(req, res) {
     if (req.query.secret === secret) {
-        depositCoinbasetoUrdubit(
-            res.json({
-                'success': true,
-                'message': 'Done!'
-            })
-        );
+        depositCoinbasetoUrdubit(function(response) {
+            res.json(response);
+        });
     } else {
         res.json({
             'success': false,

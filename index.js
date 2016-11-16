@@ -124,7 +124,7 @@ app.post('/', function(req, res) {
                 qs: {
                   secret: appWebhookSecret
                 },
-                form: {
+                json: {
                   message: 'New block!'
                 }
             }, function(error, response, body) {

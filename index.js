@@ -1,6 +1,6 @@
 // Setup request
 var request = require('request');
-var appWebhookUrl = 'http://requestb.in/1b6ffx81';
+var appWebhookUrl = 'https://app.payload.pk';
 var appWebhookSecret = process.env.APP_WEBHOOK_SECRET;
 
 // Secret

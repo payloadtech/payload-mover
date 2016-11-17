@@ -113,9 +113,33 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
         });
 };
 
+var checkCoinbaseToSweep = function(cb) {
+  coinbase
+  // grab the accounts
+      .getAccountsAsync({})
+      // return the first account
+      .then(function(accounts) {
+          return accounts[0];
+      })
+      // send the account balance to the address
+      .then(function(account) {
+          amount = account.balance.amount;
+          currency = account.balance.currency;
+          if (amount > 0) {
+            depositCoinbasetoUrdubit(cb);
+          } else {
+            cb({
+                'success': true,
+                'message': 'No new funds to sweep'
+            });
+          }
+
+        });
+};
+
 app.post('/', function(req, res) {
     if (req.query.secret === secret) {
-        depositCoinbasetoUrdubit(function(response) {
+        checkCoinbaseToSweep(function(response) {
 
             // send a webhook to the app about a block being found
             request({

@@ -18,6 +18,40 @@ var blinktrade = new BlinkTradeWS({
     prod: true
 });
 
+// Setup the logger
+
+var winston = require('winston');
+
+//
+// Requiring `winston-papertrail` will expose
+// `winston.transports.Papertrail`
+//
+require('winston-papertrail').Papertrail;
+
+var winstonPapertrail = new winston.transports.Papertrail({
+  host: process.env.PAPERTRAIL_HOST,
+  port: process.env.PAPERTRAIL_PORT,
+  program: 'payload-mover'
+});
+
+winstonPapertrail.on('error', function(err) {
+  console.error(err);
+});
+
+if (process.env.NODE_ENV === 'production') {
+
+var logger = new winston.Logger({
+  transports: [winstonPapertrail]
+});
+
+} else {
+  var logger = new winston.Logger({
+    level: 'info',
+    transports: [new (winston.transports.Console)()]
+  });
+
+}
+
 // Setup Coinbase
 var Promise = require("bluebird");
 
@@ -29,7 +63,7 @@ var coinbase = Promise.promisifyAll(new Client({
 
 // move bitcoin from Coinbase account to given address
 var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) {
-    console.log('transfering from Coinbase to ' + address);
+    logger.info('transfering from Coinbase to ' + address);
     coinbase
     // grab the accounts
         .getAccountsAsync({})
@@ -42,7 +76,7 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) 
             amount = account.balance.amount;
             currency = account.balance.currency;
 
-            console.log('transfering ' + amount + ' BTC');
+            logger.info('transfering ' + amount + ' BTC');
 
             if (amount > 0) {
                 account.sendMoney({
@@ -50,14 +84,14 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) 
                     'amount': amount,
                     'currency': currency
                 }, function(err, tx) {
-                    console.log(tx.details.title + " " + tx.details.subtitle);
+                    logger.info(tx.details.title + " " + tx.details.subtitle);
                     cb({
                         'success': true,
                         'message': 'Done!'
                     });
                 });
             } else {
-                console.log('No bitcoins to transfer');
+                logger.info('No bitcoins to transfer');
                 cb({
                     'success': true,
                     'message': 'No funds to transfer'
@@ -65,7 +99,7 @@ var transferCoinbaseBitcoinTo = function transferCoinbaseBitcoinTo(address, cb) 
             }
         })
         .catch(function(err) {
-            console.log(err);
+            logger.info(err);
             cb({
                 'success': false,
                 'message': 'An unknown error occurred'
@@ -84,7 +118,7 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
         })
         // log the heartbeat
         .then(function(heartbeat) {
-            console.log(heartbeat.Latency);
+            logger.info(heartbeat.Latency);
         })
         // authenticate
         .then(function() {
@@ -96,7 +130,7 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
         })
         // log the authentication
         .then(function(logged) {
-            console.log(logged);
+            logger.info(logged);
         })
         // request a deposit, and transfer bitcoin to it
         .then(function() {
@@ -105,7 +139,7 @@ var depositCoinbasetoUrdubit = function depositCoinbasetoUrdubit(cb) {
             });
         })
         .catch(function(err) {
-            console.log(err);
+            logger.info(err);
             cb({
                 'success': false,
                 'message': 'An unknown error occurred'
@@ -152,8 +186,8 @@ app.post('/', function(req, res) {
                   message: 'New block!'
                 }
             }, function(error, postResponse, body) {
-                if (error) console.log(error);
-                console.log(postResponse.statusCode);
+                if (error) logger.info(error);
+                logger.info(postResponse.statusCode);
             });
 
             // send back the response to the webpage
@@ -176,5 +210,5 @@ app.get('/', function(req, res){
 });
 
 app.listen(port, function() {
-    console.log('Listening on port ' + port);
+    logger.info('Listening on port ' + port);
 });

@@ -1,7 +1,7 @@
 // Setup request
 var request = require('request');
 var appWebhookUrl = 'https://app.payload.pk/notifications/mover';
-var appWebhookSecret = process.env.APP_WEBHOOK_SECRET;
+var appWebhookSecret = process.env.WEBHOOK_SECRET;
 
 // Secret
 var secret = process.env.SECRET;

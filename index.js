@@ -187,7 +187,7 @@ app.post('/', function(req, res) {
                 }
             }, function(error, postResponse, body) {
                 if (error) logger.info(error);
-                logger.info(postResponse.statusCode);
+                logger.info(postResponse, 'Successfully contacted the app');
             });
 
             // send back the response to the webpage
